@@ -1,76 +1,51 @@
-
 import {createElement} from '../framework/render.js'; 
+import { Documents } from '../mock/doc.js';
 
-
-function createDocSectionComponentTemplate() {
+function createDocumentItemTemplate(document) {
     return (
-        `<div><h3 class="section-title">Мои заявки</h3>
-                
-                <div class="documents-list">
-                    <!-- Пример заявки 1 -->
-                    <div class="document-item">
-                        <div class="document-info">
-                            <div class="document-title">Заявление на материальную помощь</div>
-                            <div class="document-meta">
-                                <span>Категория: Материальная помощь</span>
-                            </div>
-                        </div>
-                        <div class="document-status status-completed">Статус: Завершено</div>
-                    </div>
-                    
-                    <!-- Пример заявки 2 -->
-                    <div class="document-item">
-                        <div class="document-info">
-                            <div class="document-title">Заявление на материальную помощь</div>
-                            <div class="document-meta">
-                                <span>Категория: Материальная помощь</span>
-                            </div>
-                        </div>
-                        <div class="document-status status-completed">Статус: Завершено</div>
-                    </div>
-                    
-                    <!-- Пример заявки 3 -->
-                    <div class="document-item">
-                        <div class="document-info">
-                            <div class="document-title">Заявление на материальную помощь</div>
-                            <div class="document-meta">
-                                <span>Категория: Материальная помощь</span>
-                            </div>
-                        </div>
-                        <div class="document-status status-completed">Статус: Завершено</div>
-                    </div>
-                    
-                    <!-- Пример заявки 4 -->
-                    <div class="document-item">
-                        <div class="document-info">
-                            <div class="document-title">Заявление на материальную помощь</div>
-                            <div class="document-meta">
-                                <span>Категория: Материальная помощь</span>
-                            </div>
-                        </div>
-                        <div class="document-status status-completed">Статус: Завершено</div>
-                    </div>
-                </div></div>
-                `
-      );
+       `<div class="document-item">
+          <div class="document-info">
+            <div class="document-title">${document.title}</div>
+            <div class="document-meta">
+              <span>Категория: ${document.category}</span><br>
+              <span>Комментарий: ${document.comment}</span>
+            </div>
+          </div>
+          <div class="document-status ${document.statusClass}">Статус: ${document.status}</div>
+        </div>`
+    );
 }
 
+function createDocSectionComponentTemplate(documents) {
+  const documentsList = documents.map(document => 
+    createDocumentItemTemplate(document)
+  ).join('');
+
+  return (
+    `<div class="documents-section">
+      <h3 class="section-title">Мои заявки</h3>
+      <div class="documents-list">
+        ${documentsList}
+      </div>
+    </div>`
+  );
+}
 
 export default class DocSectionComponent {
-  getTemplate() {
-    return createDocSectionComponentTemplate();
+  constructor(documents = Documents) {
+    this.documents = documents;
   }
 
+  getTemplate() {
+    return createDocSectionComponentTemplate(this.documents);
+  }
 
   getElement() {
     if (!this.element) {
       this.element = createElement(this.getTemplate());
     }
-
-
     return this.element;
   }
-
 
   removeElement() {
     this.element = null;
