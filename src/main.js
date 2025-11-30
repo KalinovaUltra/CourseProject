@@ -5,11 +5,20 @@ import TemplatePlaceholderComponent from './view/template-placeholder-container.
 import { render } from './framework/render.js';
 
 const Header = document.querySelector('.header');
-render(new HeaderComponent(), Header);
-
-const Form = document.querySelector('.main-content');
-render(new FormContainerComponent(), Form);
+if (Header) {
+  render(new HeaderComponent(), Header);
+}
 
 const Notification = document.querySelector('.notification');
-render(new NotificationComponent(), Notification);
+if (Notification) {
+  render(new NotificationComponent(), Notification);
+}
 
+
+import DocPresenter from './presenter/doc-presenter.js';
+
+const container = document.querySelector('.main-content');
+if (container) {
+  const docPresenter = new DocPresenter(container);
+  docPresenter.init();
+}

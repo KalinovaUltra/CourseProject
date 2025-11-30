@@ -6,7 +6,7 @@ function createHeaderProfileComponentTemplate() {
         `<div class="header-content">
             <h1>Личный кабинет</h1>
             <nav class="nav">
-                <a href="/create-request" class="nav-link">Создать заявку</a>
+                <a href="index.html" class="nav-link">Создать заявку</a>
             </nav>
         </div>`
       );

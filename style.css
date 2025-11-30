@@ -333,3 +333,64 @@ body {
                 text-align: center;
             }
         }
+
+.modal-overlay {/* Всплывающее окно в профиле*/
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  margin: auto;
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  background: none;
+  border: none;
+}
+
+.close-modal:hover {
+  color: #000;
+}
+
+.modal-document-info {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-document-info p {
+  margin: 5px 0;
+}
+
+.text-content {
+  white-space: pre-line;
+  line-height: 1.5;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 4px;
+  border-left: 3px solid #007bff;
+}

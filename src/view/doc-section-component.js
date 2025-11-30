@@ -1,53 +1,68 @@
-import {createElement} from '../framework/render.js'; 
-import { Documents } from '../mock/doc.js';
+import {createElement} from '../framework/render.js';
+import DocumentItemComponent from './document-item-component.js';
 
-function createDocumentItemTemplate(document) {
-    return (
-       `<div class="document-item">
-          <div class="document-info">
-            <div class="document-title">${document.title}</div>
-            <div class="document-meta">
-              <span>Категория: ${document.category}</span><br>
-              <span>Комментарий: ${document.comment}</span>
-            </div>
-          </div>
-          <div class="document-status ${document.statusClass}">Статус: ${document.status}</div>
-        </div>`
-    );
-}
-
-function createDocSectionComponentTemplate(documents) {
-  const documentsList = documents.map(document => 
-    createDocumentItemTemplate(document)
-  ).join('');
-
-  return (
-    `<div class="documents-section">
+function createDocSectionComponentTemplate() {
+  return `
+    <div class="documents-section">
       <h3 class="section-title">Мои заявки</h3>
-      <div class="documents-list">
-        ${documentsList}
+      <div class="documents-list"></div>
+      <div class="modal-overlay" id="documentModal" style="display: none;">
+        <div class="modal-content">
+          <span class="close-modal">&times;</span>
+          <div id="modalBody"></div>
+        </div>
       </div>
-    </div>`
-  );
+    </div>
+  `;
 }
 
 export default class DocSectionComponent {
-  constructor(documents = Documents) {
+  constructor(documents = []) {
     this.documents = documents;
+    this.documentItemComponents = [];
   }
 
   getTemplate() {
-    return createDocSectionComponentTemplate(this.documents);
+    return createDocSectionComponentTemplate();
   }
 
   getElement() {
     if (!this.element) {
       this.element = createElement(this.getTemplate());
+      this.renderDocumentItems();
     }
     return this.element;
   }
 
+  renderDocumentItems() {
+    const documentsList = this.element.querySelector('.documents-list');
+    
+    if (this.documents.length === 0) {
+      documentsList.innerHTML = `
+        <div class="empty-state">
+          <p>У вас пока нет отправленных заявок</p>
+        </div>
+      `;
+      return;
+    }
+
+    this.documents.forEach(document => {
+      const documentItemComponent = new DocumentItemComponent(document);
+      const documentElement = documentItemComponent.getElement();
+      documentsList.appendChild(documentElement);
+      this.documentItemComponents.push(documentItemComponent);
+    });
+  }
+
   removeElement() {
-    this.element = null;
+    this.documentItemComponents.forEach(component => {
+      component.removeElement();
+    });
+    this.documentItemComponents = [];
+    
+    if (this.element) {
+      this.element.remove();
+      this.element = null;
+    }
   }
 }

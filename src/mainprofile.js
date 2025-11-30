@@ -1,13 +1,18 @@
 import HeaderProfileComponent from './view/header-profile-component.js';
 import { render } from './framework/render.js';
-import InfoComponent from './view/info-component.js';
-import DocSectionComponent from './view/doc-section-component.js';
+import ProfilePresenter from './presenter/profile-preseneter.js';
 
+// Рендерим хедер
 const HeaderProfile = document.querySelector('.header');
-render(new HeaderProfileComponent(), HeaderProfile);
+if (HeaderProfile) {
+  render(new HeaderProfileComponent(), HeaderProfile);
+}
 
-const Info = document.querySelector('.user-info');
-render(new InfoComponent(), Info);
+// Используем ProfilePresenter, но передаем ему существующие контейнеры
+const userInfoContainer = document.querySelector('.user-info');
+const documentsContainer = document.querySelector('.documents-section');
 
-const Doc=document.querySelector('.documents-section');
-render(new DocSectionComponent(), Doc);
+if (userInfoContainer && documentsContainer) {
+  const profilePresenter = new ProfilePresenter(userInfoContainer, documentsContainer);
+  profilePresenter.init();
+}

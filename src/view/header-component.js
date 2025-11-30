@@ -6,7 +6,7 @@ function createHeaderComponentTemplate() {
         `<div class="header-content">
             <h1>Система документооборота для студентов</h1>
             <nav class="nav">
-                <a href="/profile" class="nav-link">Личный кабинет</a>
+                <a href="profile.html" class="nav-link">Личный кабинет</a>
             </nav>
         </div>`
       );

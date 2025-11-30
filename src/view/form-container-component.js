@@ -1,5 +1,4 @@
 import {createElement} from '../framework/render.js'; 
-import { Categories } from '../mock/doc.js';
 
 function createFormContainerComponentTemplate(categories) {
   const options = categories.map(category => 
@@ -28,7 +27,7 @@ function createFormContainerComponentTemplate(categories) {
         </div>
 
         <div class="form-actions">
-          <button type="save" class="btn button-save">Сохранить на компьютер</button>
+
           <button type="submit" class="btn button-submit">Отправить на подпись</button>
         </div>
       </form>
@@ -37,7 +36,7 @@ function createFormContainerComponentTemplate(categories) {
 }
 
 export default class FormContainerComponent {
-  constructor(categories = Categories) {
+  constructor(categories) {
     this.categories = categories;
   }
 
@@ -54,5 +53,69 @@ export default class FormContainerComponent {
 
   removeElement() {
     this.element = null;
+  }
+
+  setCategoryChangeHandler(callback) {
+    if (!this.element) {
+      return;
+    }
+
+    const categorySelect = this.element.querySelector('#category');
+    categorySelect.addEventListener('change', callback);
+  }
+
+  setSubmitHandler(callback) {
+    if (!this.element) {
+      return;
+    }
+
+    const form = this.element.querySelector('#requestForm');
+    form.addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      callback(this.getFormData());
+    });
+  }
+
+  getFormData() {
+    if (!this.element) {
+      return null;
+    }
+
+    const categorySelect = this.element.querySelector('#category');
+    const commentTextarea = this.element.querySelector('#reason');
+    const templateInputs = this.element.querySelectorAll('.template-input, .template-textarea');
+
+    const templateData = {};
+    templateInputs.forEach(input => {
+      templateData[input.id] = input.value;
+    });
+
+    return {
+      category: categorySelect.value,
+      categoryText: categorySelect.options[categorySelect.selectedIndex].text,
+      comment: commentTextarea.value,
+      templateData: templateData
+    };
+  }
+
+  resetForm() {
+    if (!this.element) {
+      return;
+    }
+
+    const form = this.element.querySelector('#requestForm');
+    form.reset();
+    
+    const templateArea = this.element.querySelector('#templateArea');
+    templateArea.innerHTML = '<div class="template-placeholder"><p>Выберите категорию документа чтобы загрузить шаблон</p></div>';
+  }
+
+  updateTemplateArea(content) {
+    if (!this.element) {
+      return;
+    }
+
+    const templateArea = this.element.querySelector('#templateArea');
+    templateArea.innerHTML = content;
   }
 }
