@@ -1,4 +1,5 @@
 import {createElement} from '../framework/render.js'; 
+import { DocTemplates } from '../doc-templates/doc-templates.js';
 
 function createFormContainerComponentTemplate(categories) {
   const options = categories.map(category => 
@@ -12,6 +13,7 @@ function createFormContainerComponentTemplate(categories) {
         <div class="form-group">
           <label for="category">Выберите категорию:</label>
           <select id="category" name="category" class="form-select" required>
+            <option value="">Выберите тип документа</option>
             ${options}
           </select>
         </div>
@@ -27,7 +29,6 @@ function createFormContainerComponentTemplate(categories) {
         </div>
 
         <div class="form-actions">
-
           <button type="submit" class="btn button-submit">Отправить на подпись</button>
         </div>
       </form>
@@ -38,6 +39,8 @@ function createFormContainerComponentTemplate(categories) {
 export default class FormContainerComponent {
   constructor(categories) {
     this.categories = categories;
+    this.element = null;
+    this.onSubmitCallback = null;
   }
 
   getTemplate() {
@@ -47,6 +50,7 @@ export default class FormContainerComponent {
   getElement() {
     if (!this.element) {
       this.element = createElement(this.getTemplate());
+      this.setEventListeners();
     }
     return this.element;
   }
@@ -54,26 +58,34 @@ export default class FormContainerComponent {
   removeElement() {
     this.element = null;
   }
-
-  setCategoryChangeHandler(callback) {
-    if (!this.element) {
-      return;
-    }
+  setEventListeners() {
+    if (!this.element) return;
 
     const categorySelect = this.element.querySelector('#category');
-    categorySelect.addEventListener('change', callback);
-  }
-
-  setSubmitHandler(callback) {
-    if (!this.element) {
-      return;
-    }
-
     const form = this.element.querySelector('#requestForm');
+    categorySelect.addEventListener('change', (event) => {
+      this.loadTemplate(event.target.value);
+    });
     form.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      callback(this.getFormData());
+      if (this.onSubmitCallback) {
+        this.onSubmitCallback(this.getFormData());
+      }
     });
+  }
+  loadTemplate(category) {
+    if (!this.element) return;
+
+    const templateArea = this.element.querySelector('#templateArea');
+    
+    if (category && DocTemplates[category]) {
+      templateArea.innerHTML = DocTemplates[category];
+    } else {
+      templateArea.innerHTML = '<div class="template-placeholder"><p>Выберите категорию документа чтобы загрузить шаблон</p></div>';
+    }
+  }
+  setSubmitHandler(callback) {
+    this.onSubmitCallback = callback;
   }
 
   getFormData() {
@@ -83,11 +95,13 @@ export default class FormContainerComponent {
 
     const categorySelect = this.element.querySelector('#category');
     const commentTextarea = this.element.querySelector('#reason');
-    const templateInputs = this.element.querySelectorAll('.template-input, .template-textarea');
-
+    const templateInputs = this.element.querySelectorAll('.template-input:not(.student-data), .template-textarea');
     const templateData = {};
+    
     templateInputs.forEach(input => {
-      templateData[input.id] = input.value;
+      if (input.type !== 'hidden' && !input.readOnly) {
+        templateData[input.id] = input.value;
+      }
     });
 
     return {
@@ -105,17 +119,8 @@ export default class FormContainerComponent {
 
     const form = this.element.querySelector('#requestForm');
     form.reset();
-    
-    const templateArea = this.element.querySelector('#templateArea');
-    templateArea.innerHTML = '<div class="template-placeholder"><p>Выберите категорию документа чтобы загрузить шаблон</p></div>';
-  }
-
-  updateTemplateArea(content) {
-    if (!this.element) {
-      return;
-    }
-
-    const templateArea = this.element.querySelector('#templateArea');
-    templateArea.innerHTML = content;
+    const categorySelect = this.element.querySelector('#category');
+    categorySelect.selectedIndex = 0;
+    this.loadTemplate('');
   }
 }

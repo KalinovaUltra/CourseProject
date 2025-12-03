@@ -51,7 +51,7 @@ export default class DocPresenter {
 
     alert('Заявка успешно отправлена на подпись! Переходим в профиль');
     
-    //  переход на профиль, но данные не сохранятся
+    //  переход на профиль
     setTimeout(() => {
     window.location.href = 'profile.html';
     }, 1000);
