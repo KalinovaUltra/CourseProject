@@ -59,26 +59,57 @@ export default class FormContainerComponent {
     this.element = null;
   }
   setEventListeners() {
-    if (!this.element) return;
+  if (!this.element) return;
 
-    const categorySelect = this.element.querySelector('#category');
-    const form = this.element.querySelector('#requestForm');
-    categorySelect.addEventListener('change', (event) => {
-      this.loadTemplate(event.target.value);
-    });
-    form.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      if (this.onSubmitCallback) {
-        this.onSubmitCallback(this.getFormData());
-      }
-    });
+  const categorySelect = this.element.querySelector('#category');
+  const form = this.element.querySelector('#requestForm');
+  
+  categorySelect.addEventListener('change', (event) => {
+    this.loadTemplate(event.target.value);
+  });
+  
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    if (!this.validateFormSimple()) {
+      return; 
+    }
+    
+    if (this.onSubmitCallback) {
+      this.onSubmitCallback(this.getFormData());
+    }
+  });
+}
+
+validateFormSimple() {
+  if (!this.element) return false;
+  const categorySelect = this.element.querySelector('#category');
+  if (!categorySelect.value) {
+    alert('Выберите категорию документа!');
+    return false;
   }
+  const hasTemplate = this.element.querySelector('#templateArea .template-content');
+  if (!hasTemplate) {
+    alert('Сначала выберите категорию документа!');
+    return false;
+  }
+  const allInputs = this.element.querySelectorAll('.template-input, .template-textarea');
+  for (const input of allInputs) {
+    if (input.type === 'hidden' || input.readOnly) {
+      continue;
+    }
+
+    if (!input.value.trim()) {
+      alert(`Заполните поле: "${input.previousElementSibling?.textContent || input.placeholder || 'поле формы'}"`);
+      input.focus();
+      return false;
+    }
+  }
+  return true;
+}
   loadTemplate(category) {
     if (!this.element) return;
-
     const templateArea = this.element.querySelector('#templateArea');
-    
-    if (category && DocTemplates[category]) {
+        if (category && DocTemplates[category]) {
       templateArea.innerHTML = DocTemplates[category];
     } else {
       templateArea.innerHTML = '<div class="template-placeholder"><p>Выберите категорию документа чтобы загрузить шаблон</p></div>';
@@ -87,12 +118,10 @@ export default class FormContainerComponent {
   setSubmitHandler(callback) {
     this.onSubmitCallback = callback;
   }
-
   getFormData() {
     if (!this.element) {
       return null;
     }
-
     const categorySelect = this.element.querySelector('#category');
     const commentTextarea = this.element.querySelector('#reason');
     const templateInputs = this.element.querySelectorAll('.template-input:not(.student-data), .template-textarea');
@@ -116,7 +145,6 @@ export default class FormContainerComponent {
     if (!this.element) {
       return;
     }
-
     const form = this.element.querySelector('#requestForm');
     form.reset();
     const categorySelect = this.element.querySelector('#category');

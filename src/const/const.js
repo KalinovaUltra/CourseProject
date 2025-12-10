@@ -15,3 +15,5 @@ export const Categories = [
   { value: 'academic', text: 'Академические вопросы' },
   { value: 'social', text: 'Социальные льготы' }
 ];
+
+export { StatusMap, StatusClassMap } from './status-maps.js';

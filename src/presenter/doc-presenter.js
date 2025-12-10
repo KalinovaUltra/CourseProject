@@ -48,10 +48,6 @@ export default class DocPresenter {
     }
     this.formComponent.resetForm();
     this.currentTemplate = null;
-
-    alert('Заявка успешно отправлена на подпись! Переходим в профиль');
-    
-    //  переход на профиль
     setTimeout(() => {
     window.location.href = 'profile.html';
     }, 1000);
